@@ -1,0 +1,185 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useData } from '@/contexts/DataContext';
+import { Save, ArrowLeft, UserCog } from 'lucide-react';
+
+export function AddStaff() {
+  const navigate = useNavigate();
+  const { addPersonnel } = useData();
+  const [formData, setFormData] = useState({
+    nom: '',
+    prenom: '',
+    type: 'medecin' as 'medecin' | 'infirmier' | 'agent',
+    specialite: '',
+    telephone: '',
+    email: '',
+    dateEmbauche: new Date().toISOString().split('T')[0],
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addPersonnel(formData);
+    navigate('/personnel');
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate('/personnel')}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        </button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Nouveau Personnel</h1>
+          <p className="text-gray-500">Ajouter un membre du personnel</p>
+        </div>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <UserCog className="w-8 h-8 text-blue-600" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-gray-800">Informations du personnel</h2>
+            <p className="text-sm text-gray-500">Renseignez les informations</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nom <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="nom"
+              value={formData.nom}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Nom de famille"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Prénom <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="prenom"
+              value={formData.prenom}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="Prénom"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+              required
+            >
+              <option value="medecin">Médecin</option>
+              <option value="infirmier">Infirmier</option>
+              <option value="agent">Agent administratif</option>
+            </select>
+          </div>
+
+          {formData.type === 'medecin' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Spécialité
+              </label>
+              <input
+                type="text"
+                name="specialite"
+                value={formData.specialite}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                placeholder="Ex: Cardiologie, Pédiatrie..."
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="email@hospital.com"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Téléphone <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              name="telephone"
+              value={formData.telephone}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+              placeholder="06 12 34 56 78"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Date d'embauche
+            </label>
+            <input
+              type="date"
+              name="dateEmbauche"
+              value={formData.dateEmbauche}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-4 mt-6 pt-6 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={() => navigate('/personnel')}
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+          >
+            <Save className="w-5 h-5" />
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
